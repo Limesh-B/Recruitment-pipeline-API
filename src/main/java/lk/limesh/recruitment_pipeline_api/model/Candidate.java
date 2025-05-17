@@ -3,18 +3,12 @@ package lk.limesh.recruitment_pipeline_api.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "candidates")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Candidate {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,4 +28,77 @@ public class Candidate {
     private Boolean referred;
 
     private String assessmentStatus;
+
+    // Constructor
+    public Candidate() {
+    }
+
+    public Candidate(Long id, String name, ApplicationStage stage, LocalDate applicationDate,
+                     Double overallScore, Boolean referred, String assessmentStatus) {
+        this.id = id;
+        this.name = name;
+        this.stage = stage;
+        this.applicationDate = applicationDate;
+        this.overallScore = overallScore;
+        this.referred = referred;
+        this.assessmentStatus = assessmentStatus;
+    }
+
+    // Getters and Setters
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public ApplicationStage getStage() {
+        return stage;
+    }
+
+    public void setStage(ApplicationStage stage) {
+        this.stage = stage;
+    }
+
+    public LocalDate getApplicationDate() {
+        return applicationDate;
+    }
+
+    public void setApplicationDate(LocalDate applicationDate) {
+        this.applicationDate = applicationDate;
+    }
+
+    public Double getOverallScore() {
+        return overallScore;
+    }
+
+    public void setOverallScore(Double overallScore) {
+        this.overallScore = overallScore;
+    }
+
+    public Boolean getReferred() {
+        return referred;
+    }
+
+    public void setReferred(Boolean referred) {
+        this.referred = referred;
+    }
+
+    public String getAssessmentStatus() {
+        return assessmentStatus;
+    }
+
+    public void setAssessmentStatus(String assessmentStatus) {
+        this.assessmentStatus = assessmentStatus;
+    }
 }
