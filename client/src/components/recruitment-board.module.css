@@ -1,0 +1,350 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.toolbarSection {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background-color: white;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.searchContainer {
+    display: flex;
+    align-items: center;
+    background-color: #f1f5f9;
+    border-radius: 0.375rem;
+    padding: 0.5rem 0.75rem;
+    width: 240px;
+    color: #64748b;
+}
+
+.searchInput {
+    border: none;
+    background: transparent;
+    outline: none;
+    width: 100%;
+    margin-left: 0.5rem;
+    font-size: 0.875rem;
+    color: #1e293b;
+}
+
+.filters {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-left: 1.5rem;
+}
+
+.filterButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    color: #64748b;
+    transition: all 0.2s;
+}
+
+.filterButton:hover {
+    border-color: #cbd5e1;
+    background-color: #f8fafc;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-left: auto;
+}
+
+.actionButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    color: #64748b;
+    transition: all 0.2s;
+}
+
+.actionButton:hover {
+    border-color: #cbd5e1;
+    background-color: #f8fafc;
+}
+
+.boardContainer {
+    flex: 1;
+    overflow: auto;
+    padding: 1.5rem;
+}
+
+.board {
+    display: flex;
+    gap: 1.5rem;
+    height: 100%;
+}
+
+.column {
+    flex: 1;
+    min-width: 280px;
+    display: flex;
+    flex-direction: column;
+    background-color: #f8fafc;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.columnHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    color: white;
+}
+
+.columnTitle {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.columnCount {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 9999px;
+    padding: 0.125rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.columnContent {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.detailButton {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem;
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    color: #64748b;
+    transition: all 0.2s;
+    margin-bottom: 0.5rem;
+}
+
+.detailButton:hover {
+    border-color: #cbd5e1;
+    background-color: #f8fafc;
+}
+
+.candidateCard {
+    background-color: white;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.candidateCard:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border-color: #cbd5e1;
+}
+
+.selectedCard {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 1px #4f46e5;
+}
+
+.candidateHeader {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.candidateInfo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.candidateAvatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 9999px;
+    object-fit: cover;
+}
+
+.candidateInitial {
+    width: 40px;
+    height: 40px;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.candidateName {
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: #1e293b;
+    margin-bottom: 0.25rem;
+}
+
+.candidateDate {
+    font-size: 0.8125rem;
+    color: #64748b;
+}
+
+.menuButton {
+    position: relative;
+    color: #64748b;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+}
+
+.menuButton:hover {
+    background-color: #f1f5f9;
+    color: #1e293b;
+}
+
+.menuDropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 180px;
+    background-color: white;
+    border-radius: 0.375rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    z-index: 10;
+    overflow: hidden;
+}
+
+.menuDropdown button {
+    width: 100%;
+    text-align: left;
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    color: #1e293b;
+    transition: background-color 0.2s;
+}
+
+.menuDropdown button:hover {
+    background-color: #f1f5f9;
+}
+
+.menuDivider {
+    height: 1px;
+    background-color: #e2e8f0;
+    margin: 0.25rem 0;
+}
+
+.candidateRating {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.stars {
+    display: flex;
+    margin-right: 0.5rem;
+}
+
+.star,
+.starFilled {
+    font-size: 0.875rem;
+    color: #cbd5e1;
+}
+
+.starFilled {
+    color: #f59e0b;
+}
+
+.ratingText {
+    font-size: 0.8125rem;
+    color: #64748b;
+    margin-right: auto;
+}
+
+.referredBadge {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    background-color: #f1f5f9;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    color: #4f46e5;
+}
+
+.assessmentButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    padding: 0.5rem;
+    background-color: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 0.375rem;
+    font-size: 0.8125rem;
+    color: #64748b;
+    transition: all 0.2s;
+}
+
+.assessmentButton:hover {
+    background-color: #f1f5f9;
+    color: #1e293b;
+}
+
+@media (max-width: 1280px) {
+    .board {
+        overflow-x: auto;
+    }
+
+    .column {
+        min-width: 260px;
+    }
+}
+
+@media (max-width: 768px) {
+    .toolbarSection {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .filters,
+    .actions {
+        margin-left: 0;
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+    }
+}
