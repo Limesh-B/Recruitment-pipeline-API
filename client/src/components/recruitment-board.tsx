@@ -1,12 +1,14 @@
 import type React from "react"
 import { useState, useEffect } from "react"
-import JobHeader from "./job-header"
+import Header from "./header.tsx"
 import styles from "./recruitment-board.module.css"
+import AddCandidateForm from "./add-candidate-form"
 import type {
     FrontendStage,
     FrontendCandidate,
     Candidate,
 } from "../types/candidate"
+import { ApplicationStage } from "../types/ApplicationStage"
 
 import {
     getAllCandidates,
@@ -20,6 +22,8 @@ export default function RecruitmentBoard() {
     const [selectedCandidate, setSelectedCandidate] = useState<string | null>(null)
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<string | null>(null)
+    const [showAddCandidateForm, setShowAddCandidateForm] = useState<boolean>(false)
+    const [selectedStage, setSelectedStage] = useState<ApplicationStage>(ApplicationStage.APPLYING_PERIOD)
 
     // Function to map backend candidate to frontend format
     const mapToFrontendCandidate = (candidate: Candidate): FrontendCandidate => {
@@ -36,7 +40,7 @@ export default function RecruitmentBoard() {
         };
     };
 
-    // Function to get a deterministic color based on candidate ID
+    // Function to get a random color based on candidate ID
     const getRandomColor = (id: number): string => {
         const colors = [
             "#4f46e5", "#0ea5e9", "#0891b2", "#059669",
@@ -48,23 +52,23 @@ export default function RecruitmentBoard() {
 
     // Fetch candidates on component mount
     useEffect(() => {
-        const fetchCandidates = async () => {
-            try {
-                setLoading(true);
-                const apiCandidates = await getAllCandidates();
-                const frontendCandidates = apiCandidates.map(mapToFrontendCandidate);
-                setCandidates(frontendCandidates);
-                setError(null);
-            } catch (err) {
-                console.error('Failed to fetch candidates:', err);
-                setError('Failed to load candidates. Please try again.');
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchCandidates();
     }, []);
+
+    const fetchCandidates = async () => {
+        try {
+            setLoading(true);
+            const apiCandidates = await getAllCandidates();
+            const frontendCandidates = apiCandidates.map(mapToFrontendCandidate);
+            setCandidates(frontendCandidates);
+            setError(null);
+        } catch (err) {
+            console.error('Failed to fetch candidates:', err);
+            setError('Failed to load candidates. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const moveCandidate = async (candidateId: string, newStage: FrontendStage) => {
         try {
@@ -88,6 +92,11 @@ export default function RecruitmentBoard() {
         }
     };
 
+    const handleAddCandidate = (stage: ApplicationStage) => {
+        setSelectedStage(stage);
+        setShowAddCandidateForm(true);
+    };
+
     const applyingCandidates = candidates.filter((c) => c.stage === "applying")
     const screeningCandidates = candidates.filter((c) => c.stage === "screening")
     const interviewCandidates = candidates.filter((c) => c.stage === "interview")
@@ -103,7 +112,7 @@ export default function RecruitmentBoard() {
 
     return (
         <div className={styles.container}>
-            <JobHeader />
+            <Header />
 
             <div className={styles.toolbarSection}>
                 <div className={styles.searchContainer}>
@@ -154,10 +163,18 @@ export default function RecruitmentBoard() {
                     <div className={styles.column}>
                         <div className={styles.columnHeader} style={{ backgroundColor: "#f97316" }}>
                             <h3 className={styles.columnTitle}>Applying Period</h3>
-                            <span className={styles.columnCount}>{applyingCandidates.length}</span>
+                            <div className={styles.columnActions}>
+                                <span className={styles.columnCount}>{applyingCandidates.length}</span>
+                                <button
+                                    className={styles.addButton}
+                                    onClick={() => handleAddCandidate(ApplicationStage.APPLYING_PERIOD)}
+                                    title="Add Candidate"
+                                >
+                                    <PlusIcon />
+                                </button>
+                            </div>
                         </div>
                         <div className={styles.columnContent}>
-
                             {applyingCandidates.map((candidate) => (
                                 <CandidateCard
                                     key={candidate.id}
@@ -173,10 +190,18 @@ export default function RecruitmentBoard() {
                     <div className={styles.column}>
                         <div className={styles.columnHeader} style={{ backgroundColor: "#a855f7" }}>
                             <h3 className={styles.columnTitle}>Screening</h3>
-                            <span className={styles.columnCount}>{screeningCandidates.length}</span>
+                            <div className={styles.columnActions}>
+                                <span className={styles.columnCount}>{screeningCandidates.length}</span>
+                                <button
+                                    className={styles.addButton}
+                                    onClick={() => handleAddCandidate(ApplicationStage.SCREENING)}
+                                    title="Add Candidate"
+                                >
+                                    <PlusIcon />
+                                </button>
+                            </div>
                         </div>
                         <div className={styles.columnContent}>
-
                             {screeningCandidates.map((candidate) => (
                                 <CandidateCard
                                     key={candidate.id}
@@ -192,10 +217,18 @@ export default function RecruitmentBoard() {
                     <div className={styles.column}>
                         <div className={styles.columnHeader} style={{ backgroundColor: "#0ea5e9" }}>
                             <h3 className={styles.columnTitle}>Interview</h3>
-                            <span className={styles.columnCount}>{interviewCandidates.length}</span>
+                            <div className={styles.columnActions}>
+                                <span className={styles.columnCount}>{interviewCandidates.length}</span>
+                                <button
+                                    className={styles.addButton}
+                                    onClick={() => handleAddCandidate(ApplicationStage.INTERVIEW)}
+                                    title="Add Candidate"
+                                >
+                                    <PlusIcon />
+                                </button>
+                            </div>
                         </div>
                         <div className={styles.columnContent}>
-
                             {interviewCandidates.map((candidate) => (
                                 <CandidateCard
                                     key={candidate.id}
@@ -211,10 +244,18 @@ export default function RecruitmentBoard() {
                     <div className={styles.column}>
                         <div className={styles.columnHeader} style={{ backgroundColor: "#06b6d4" }}>
                             <h3 className={styles.columnTitle}>Test</h3>
-                            <span className={styles.columnCount}>{testCandidates.length}</span>
+                            <div className={styles.columnActions}>
+                                <span className={styles.columnCount}>{testCandidates.length}</span>
+                                <button
+                                    className={styles.addButton}
+                                    onClick={() => handleAddCandidate(ApplicationStage.TEST)}
+                                    title="Add Candidate"
+                                >
+                                    <PlusIcon />
+                                </button>
+                            </div>
                         </div>
                         <div className={styles.columnContent}>
-
                             {testCandidates.map((candidate) => (
                                 <CandidateCard
                                     key={candidate.id}
@@ -228,6 +269,14 @@ export default function RecruitmentBoard() {
                     </div>
                 </div>
             </div>
+
+            {showAddCandidateForm && (
+                <AddCandidateForm
+                    initialStage={selectedStage}
+                    onClose={() => setShowAddCandidateForm(false)}
+                    onSuccess={fetchCandidates}
+                />
+            )}
         </div>
     )
 }
@@ -285,17 +334,17 @@ function CandidateCard({ candidate, isSelected, onSelect, onMove }: CandidateCar
                 <div className={styles.stars}>
                     {Array.from({ length: 5 }).map((_, i) => (
                         <span key={i} className={i < candidate.rating ? styles.starFilled : styles.star}>
-              ★
-            </span>
+                            ★
+                        </span>
                     ))}
                 </div>
                 <span className={styles.ratingText}>{candidate.rating} Overall</span>
 
                 {candidate.isReferred && (
                     <span className={styles.referredBadge}>
-            <UserPlusIcon />
-            Referred
-          </span>
+                        <UserPlusIcon />
+                        Referred
+                    </span>
                 )}
             </div>
 
@@ -366,24 +415,6 @@ function ChevronDownIcon() {
         </svg>
     )
 }
-
-// function ChevronRightIcon() {
-//     return (
-//         <svg
-//             xmlns="http://www.w3.org/2000/svg"
-//             width="16"
-//             height="16"
-//             viewBox="0 0 24 24"
-//             fill="none"
-//             stroke="currentColor"
-//             strokeWidth="2"
-//             strokeLinecap="round"
-//             strokeLinejoin="round"
-//         >
-//             <polyline points="9 18 15 12 9 6"></polyline>
-//         </svg>
-//     )
-// }
 
 function ScoreIcon() {
     return (
