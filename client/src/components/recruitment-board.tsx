@@ -439,13 +439,13 @@ function CandidateCard({ candidate, isSelected, onSelect, onMove }: CandidateCar
 
                     {showMenu && (
                         <div className={styles.menuDropdown}>
-                            <button onClick={() => onMove("applying")}>Move to Applying</button>
-                            <button onClick={() => onMove("screening")}>Move to Screening</button>
-                            <button onClick={() => onMove("interview")}>Move to Interview</button>
-                            <button onClick={() => onMove("test")}>Move to Test</button>
+                            <div role="button" onClick={() => onMove("applying")}>Move to Applying</div>
+                            <div role="button" onClick={() => onMove("screening")}>Move to Screening</div>
+                            <div role="button" onClick={() => onMove("interview")}>Move to Interview</div>
+                            <div role="button" onClick={() => onMove("test")}>Move to Test</div>
                             <div className={styles.menuDivider}></div>
-                            <button>View Profile</button>
-                            <button>Send Email</button>
+                            <div role="button">View Profile</div>
+                            <div role="button">Send Email</div>
                         </div>
                     )}
                 </button>
