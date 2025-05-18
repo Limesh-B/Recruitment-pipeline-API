@@ -17,18 +17,18 @@ This project is a recruitment tracking system built with **React** (frontend), *
 ### 1. Clone the Repository
 ```bash
 git clone https://github.com/Limesh-B/Recruitment-pipeline-API.git
-cd recruitment-pipeline-api
+cd Recruitment-pipeline-API
 ```
 
 ### 2. Backend Setup
 
 #### a. Navigate to the API folder
 ```bash
-cd recruitment-pipeline-api
+cd Recruitment-pipeline-API
 ```
 
 #### b. Create a `.env` file
-Create a `.env` file in the `recruitment-pipeline-api` directory with your PostgreSQL credentials:
+Create a `.env` file in the `Recruitment-pipeline-API` directory with your PostgreSQL credentials:
 
 ```env
 DB_URL=jdbc:postgresql://localhost:5432/recruitment_db
