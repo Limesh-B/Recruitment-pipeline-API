@@ -7,6 +7,7 @@ import FilterPopup, {type FilterCriteria} from "./filter-popup"
 import type {Candidate, FrontendCandidate, FrontendStage,} from "../types/candidate"
 import {ApplicationStage} from "../types/ApplicationStage"
 import AssessmentModal from "./assessment-modal.tsx"
+import CandidateProfileModal from "./candidate-profile-modal" // Import the profile modal component
 import {
     deleteCandidate,
     getAllCandidates,
@@ -42,6 +43,10 @@ export default function RecruitmentBoard() {
     // Assessment modal state
     const [showAssessmentModal, setShowAssessmentModal] = useState<boolean>(false);
     const [assessmentTarget, setAssessmentTarget] = useState<FrontendCandidate | null>(null);
+
+    // Profile modal state
+    const [showProfileModal, setShowProfileModal] = useState<boolean>(false);
+    const [profileCandidateId, setProfileCandidateId] = useState<string | null>(null);
 
     // Referral mode state
     const [referMode, setReferMode] = useState<boolean>(false);
@@ -212,6 +217,18 @@ export default function RecruitmentBoard() {
         setShowAssessmentModal(true);
     };
 
+    // Open the profile modal for a given candidate
+    const handleOpenProfile = (candidateId: string) => {
+        setProfileCandidateId(candidateId);
+        setShowProfileModal(true);
+    };
+
+    // Close the profile modal
+    const handleCloseProfile = () => {
+        setShowProfileModal(false);
+        setProfileCandidateId(null);
+    };
+
     // Save the rating, update candidate, then refresh
     const handleSaveAssessment = async (candidateId: string, rating: number) => {
         try {
@@ -370,34 +387,34 @@ export default function RecruitmentBoard() {
                 <div className={styles.actions}>
                     <button
                         className={styles.actionButton}
-                    onClick={handleReferPeopleClick}
+                        onClick={handleReferPeopleClick}
                     >
-                    <UsersIcon />
-                    Refer People
-                </button>
-                {/* only show during referral mode */}
-                {referMode && (
-                    <>
-                    <button
-                    className={styles.actionButton}
-                onClick={handleConfirmReferrals}
-                >
-                Confirm Referrals
-                </button>
-                <button
-                    className={styles.actionButton}
-                onClick={() => setReferMode(false)}
-                >
-                Cancel
-                </button>
-                </>
-                )}
+                        <UsersIcon />
+                        Refer People
+                    </button>
+                    {/* only show during referral mode */}
+                    {referMode && (
+                        <>
+                            <button
+                                className={styles.actionButton}
+                                onClick={handleConfirmReferrals}
+                            >
+                                Confirm Referrals
+                            </button>
+                            <button
+                                className={styles.actionButton}
+                                onClick={() => setReferMode(false)}
+                            >
+                                Cancel
+                            </button>
+                        </>
+                    )}
 
-                    <button className={styles.actionButton}>
+                    <button className={styles.actionButton} disabled>
                         <SettingsIcon/>
                     </button>
 
-                    <button className={styles.actionButton}>
+                    <button className={styles.actionButton} disabled>
                         <KanbanIcon/>
                         Kanban
                         <ChevronDownIcon/>
@@ -437,6 +454,7 @@ export default function RecruitmentBoard() {
                                     onToggleReferral={() => toggleReferral(candidate.id)}
                                     isReferralMode={referMode}
                                     isSelectedForReferral={referralSet.has(candidate.id)}
+                                    onViewProfile={() => handleOpenProfile(candidate.id)}
                                 />
                             ))}
                         </div>
@@ -472,6 +490,7 @@ export default function RecruitmentBoard() {
                                     onToggleReferral={() => toggleReferral(candidate.id)}
                                     isReferralMode={referMode}
                                     isSelectedForReferral={referralSet.has(candidate.id)}
+                                    onViewProfile={() => handleOpenProfile(candidate.id)}
                                 />
                             ))}
                         </div>
@@ -507,6 +526,7 @@ export default function RecruitmentBoard() {
                                     onToggleReferral={() => toggleReferral(candidate.id)}
                                     isReferralMode={referMode}
                                     isSelectedForReferral={referralSet.has(candidate.id)}
+                                    onViewProfile={() => handleOpenProfile(candidate.id)}
                                 />
                             ))}
                         </div>
@@ -542,6 +562,7 @@ export default function RecruitmentBoard() {
                                     onToggleReferral={() => toggleReferral(candidate.id)}
                                     isReferralMode={referMode}
                                     isSelectedForReferral={referralSet.has(candidate.id)}
+                                    onViewProfile={() => handleOpenProfile(candidate.id)}
                                 />
                             ))}
                         </div>
@@ -594,11 +615,18 @@ export default function RecruitmentBoard() {
             {showAssessmentModal && assessmentTarget && (
                 <AssessmentModal
                     candidateId={assessmentTarget.id}
-                candidateName={assessmentTarget.name}
-                onClose={() => setShowAssessmentModal(false)}
-                onSave={handleSaveAssessment}
+                    candidateName={assessmentTarget.name}
+                    onClose={() => setShowAssessmentModal(false)}
+                    onSave={handleSaveAssessment}
                 />
-                )}
+            )}
+
+            {showProfileModal && profileCandidateId && (
+                <CandidateProfileModal
+                    candidateId={profileCandidateId}
+                    onClose={handleCloseProfile}
+                />
+            )}
         </div>
     )
 }
@@ -609,13 +637,14 @@ interface CandidateCardProps {
     onSelect: () => void
     onMove: (stage: FrontendStage) => void
     onDelete: () => void
+    onViewProfile: () => void
     onToggleReferral?: () => void;
     isReferralMode?: boolean;
     isSelectedForReferral?: boolean;
     onAddAssessment: () => void;
 }
 
-function CandidateCard({candidate, isSelected, onSelect, onMove, onDelete, onAddAssessment, onToggleReferral, isReferralMode = false, isSelectedForReferral = false}: CandidateCardProps) {
+function CandidateCard({candidate, isSelected, onSelect, onMove, onDelete, onViewProfile, onAddAssessment, onToggleReferral, isReferralMode = false, isSelectedForReferral = false}: CandidateCardProps) {
     const [showMenu, setShowMenu] = useState(false)
 
     const handleMenuToggle = (e: React.MouseEvent) => {
@@ -661,7 +690,11 @@ function CandidateCard({candidate, isSelected, onSelect, onMove, onDelete, onAdd
                             <div role="button" onClick={() => onMove("interview")}>Move to Interview</div>
                             <div role="button" onClick={() => onMove("test")}>Move to Test</div>
                             <div className={styles.menuDivider}></div>
-                            <div role="button">View Profile</div>
+                            <div role="button" onClick={(e) => {
+                                e.stopPropagation();
+                                setShowMenu(false);
+                                onViewProfile();
+                            }}>View Profile</div>
                             <div role="button" onClick={(e) => {
                                 e.stopPropagation();
                                 setShowMenu(false);
@@ -699,17 +732,17 @@ function CandidateCard({candidate, isSelected, onSelect, onMove, onDelete, onAdd
             </div>
 
             {candidate.assessment && (
-                        <div
-                          className={styles.assessmentButton}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onAddAssessment();
-                          }}
-                        >
-                            <PlusIcon/>
-                            Add Assessment
-                        </div>
-                    )}
+                <div
+                    className={styles.assessmentButton}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onAddAssessment();
+                    }}
+                >
+                    <PlusIcon/>
+                    Add Assessment
+                </div>
+            )}
         </div>
     )
 }

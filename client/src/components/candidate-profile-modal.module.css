@@ -1,0 +1,297 @@
+/* Profile Modal Styling */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(2px);
+}
+
+.profileModal {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding-bottom: 1.5rem; /* Added bottom padding */
+}
+
+.profileHeader {
+    padding: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: center; /* Center the heading */
+    align-items: center;
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 10;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.profileTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0;
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+    position: absolute; /* Position the close button absolutely */
+    right: 1rem; /* Place it on the right side */
+}
+
+.closeButton:hover {
+    background-color: #f3f4f6;
+    color: #111827;
+}
+
+.profileContent {
+    padding: 1.5rem;
+    flex: 1;
+}
+
+.profileBasicInfo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.profileAvatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 1rem;
+}
+
+.profileInitial {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: white;
+    margin-right: 1rem;
+}
+
+.profileNameContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.profileName {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 0.5rem 0;
+}
+
+.profileMeta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.profileStage {
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: white;
+    display: inline-flex;
+    align-items: center;
+}
+
+.profileDetails {
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.profileDetailItem {
+    margin-bottom: 0.75rem;
+}
+
+.profileDetailItem:last-child {
+    margin-bottom: 0;
+}
+
+.profileDetailLabel {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6b7280;
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.profileDetailValue {
+    font-size: 1rem;
+    color: #111827;
+}
+
+.profileSection {
+    margin-bottom: 1.5rem;
+}
+
+.profileSectionTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 0.75rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.profileNotes {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin: 0;
+    font-style: italic;
+}
+
+.profileActivities {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.activityItem {
+    display: flex;
+    align-items: flex-start;
+    padding: 0.5rem;
+    border-radius: 6px;
+    background-color: #f9fafb;
+}
+
+.activityIcon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.75rem;
+}
+
+.activityInfo {
+    flex: 1;
+}
+
+.activityTitle {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #111827;
+}
+
+.activityDate {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.profileActions {
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-top: 1px solid #e5e7eb;
+    background-color: #f9fafb;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.profileButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    background-color: white;
+    color: #4b5563;
+    border: 1px solid #d1d5db;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.profileButton:hover {
+    background-color: #f3f4f6;
+    border-color: #9ca3af;
+}
+
+/* For candidate rating stars */
+.candidateRating {
+    display: flex;
+    align-items: center;
+}
+
+.stars {
+    margin-right: 0.5rem;
+}
+
+.starFilled {
+    color: #f59e0b;
+}
+
+.star {
+    color: #d1d5db;
+}
+
+.ratingText {
+    font-size: 0.875rem;
+    color: #4b5563;
+}
+
+/* Loading and Error states */
+.loadingState,
+.errorState {
+    padding: 2rem;
+    text-align: center;
+    color: #6b7280;
+}
+
+.errorState {
+    color: #ef4444;
+}
+
+/* Referred badge */
+.referredBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #4b5563;
+    background-color: #f3f4f6;
+    border: 1px solid #e5e7eb;
+}

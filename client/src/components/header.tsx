@@ -7,32 +7,32 @@ export default function Header() {
     return (
         <div className={styles.jobHeader}>
             <div className={styles.jobTitleSection}>
-                <button className={styles.backButton}>
+                <button className={styles.backButton} disabled>
                     <ArrowLeftIcon />
                 </button>
 
                 <div className={styles.jobTitleContainer}>
                     <h1 className={styles.jobTitle}>Research and Development Officer</h1>
-                    <button className={styles.expandButton}>
+                    <button className={styles.expandButton} disabled>
                         <ChevronDownIcon />
                     </button>
                 </div>
 
                 <div className={styles.pagination}>
-                    <button className={styles.paginationButton}>
+                    <button className={styles.paginationButton} disabled>
                         <ChevronLeftIcon />
                     </button>
                     <span className={styles.paginationText}>1 of 8</span>
-                    <button className={styles.paginationButton}>
+                    <button className={styles.paginationButton} disabled>
                         <ChevronRightIcon />
                     </button>
                 </div>
 
                 <div className={styles.actions}>
-                    <button className={styles.moreButton}>
+                    <button className={styles.moreButton} disabled>
                         <MoreIcon />
                     </button>
-                    <button className={styles.shareButton}>
+                    <button className={styles.shareButton} disabled>
                         <ShareIcon />
                         Share & Promote
                     </button>
