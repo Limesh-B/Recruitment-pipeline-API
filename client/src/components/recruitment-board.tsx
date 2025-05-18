@@ -13,6 +13,7 @@ import { ApplicationStage } from "../types/ApplicationStage"
 
 import {
     getAllCandidates,
+    searchCandidatesByName,
     updateCandidateStage,
     mapStageToFrontend,
     mapStageToBackend
@@ -33,6 +34,7 @@ export default function RecruitmentBoard() {
     const [filterCriteria, setFilterCriteria] = useState<FilterCriteria>({
         isActive: false
     })
+    const [searchInput, setSearchInput] = useState<string>("")
     const [searchQuery, setSearchQuery] = useState<string>("")
 
     // Function to map backend candidate to frontend format
@@ -169,8 +171,30 @@ export default function RecruitmentBoard() {
 
     // Handle search input changes
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchQuery(e.target.value);
+        setSearchInput(e.target.value);
     };
+
+    const handleSearchKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+           if (e.key === 'Enter') {
+                 const q = searchInput.trim();
+                 setSearchQuery(q);
+
+                     if (q === "") {
+                       await fetchCandidates();
+                     } else {
+                       setLoading(true);
+                       try {
+                             const apiResults = await searchCandidatesByName(q);
+                             setCandidates(apiResults.map(mapToFrontendCandidate));
+                           } catch (err) {
+                             console.error("Search failed:", err);
+                             setError("Search failed. Please try again.");
+                           } finally {
+                             setLoading(false);
+                           }
+                     }
+               }
+         };
 
     const applyingCandidates = filteredCandidates.filter((c) => c.stage === "applying")
     const screeningCandidates = filteredCandidates.filter((c) => c.stage === "screening")
@@ -194,10 +218,11 @@ export default function RecruitmentBoard() {
                     <SearchIcon />
                     <input
                         type="text"
-                        placeholder="Search"
+                        placeholder="Search by Name"
                         className={styles.searchInput}
-                        value={searchQuery}
+                        value={searchInput}
                         onChange={handleSearchChange}
+                        onKeyDown={handleSearchKeyDown}
                     />
                 </div>
 

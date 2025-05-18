@@ -37,6 +37,24 @@ export const getAllCandidates = async (): Promise<Candidate[]> => {
     return response.json();
 };
 
+// Search candidates by name
+export const searchCandidatesByName = async (name: string): Promise<Candidate[]> => {
+    const response = await fetch(`${API_BASE_URL}/search?name=${encodeURIComponent(name)}`);
+    if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+    }
+    return response.json();
+};
+
+// Get a single candidate by ID
+export const getCandidateById = async (id: number): Promise<Candidate> => {
+    const response = await fetch(`${API_BASE_URL}/${id}`);
+    if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+    }
+    return response.json();
+};
+
 // Get candidates by stage
 export const getCandidatesByStage = async (stage: ApplicationStage): Promise<Candidate[]> => {
     const response = await fetch(`${API_BASE_URL}/stage/${stage}`);
