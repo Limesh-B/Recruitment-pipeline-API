@@ -6,10 +6,11 @@ import AddCandidateForm from "./add-candidate-form"
 import FilterPopup, {type FilterCriteria} from "./filter-popup"
 import type {Candidate, FrontendCandidate, FrontendStage,} from "../types/candidate"
 import {ApplicationStage} from "../types/ApplicationStage"
-
+import AssessmentModal from "./assessment-modal.tsx"
 import {
     deleteCandidate,
     getAllCandidates,
+    updateCandidate,
     mapStageToBackend,
     mapStageToFrontend,
     searchCandidatesByName,
@@ -37,6 +38,10 @@ export default function RecruitmentBoard() {
     // Delete-confirmation modal state
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState<boolean>(false);
     const [candidateToDelete, setCandidateToDelete] = useState<string | null>(null);
+
+    // Assessment modal state
+    const [showAssessmentModal, setShowAssessmentModal] = useState<boolean>(false);
+    const [assessmentTarget, setAssessmentTarget] = useState<FrontendCandidate | null>(null);
 
     // Function to map backend candidate to frontend format
     const mapToFrontendCandidate = (candidate: Candidate): FrontendCandidate => {
@@ -197,7 +202,51 @@ export default function RecruitmentBoard() {
         }
     };
 
-    // FIXED: Moved handleDeleteCandidate inside the component
+    // Open the assessment modal for a given candidate
+    const handleOpenAssessment = (candidate: FrontendCandidate) => {
+        setAssessmentTarget(candidate);
+        setShowAssessmentModal(true);
+    };
+
+    // Save the rating, update candidate, then refresh
+    const handleSaveAssessment = async (candidateId: string, rating: number) => {
+        try {
+            const current = candidates.find(c => c.id === candidateId);
+            if (!current) throw new Error("Candidate not found in local state");
+
+            const payload = {
+                name: current.name,
+                stage: mapStageToBackend(current.stage),
+                applicationDate: new Date(current.appliedDate).toISOString(),  // or however you store it
+                referred: current.isReferred,
+                overallScore: rating,
+                assessmentStatus: 'COMPLETED',
+            };
+
+            await updateCandidate(parseInt(candidateId, 10), payload);
+
+            setCandidates(prev =>
+                prev.map(c =>
+                    c.id === candidateId
+                        ? { ...c, rating, assessment: false }
+                        : c
+                )
+            );
+            setFilteredCandidates(prev =>
+                prev.map(c =>
+                    c.id === candidateId
+                        ? { ...c, rating, assessment: false }
+                        : c
+                )
+            );
+        } catch (err) {
+            console.error('Failed to save assessment:', err);
+        } finally {
+            setShowAssessmentModal(false);
+        }
+    };
+
+
     const handleDeleteCandidate = async (candidateId: string) => {
         try {
             const id = parseInt(candidateId);
@@ -321,6 +370,7 @@ export default function RecruitmentBoard() {
                                         setCandidateToDelete(candidate.id);
                                         setShowDeleteConfirmation(true);
                                     }}
+                                    onAddAssessment={() => handleOpenAssessment(candidate)}
                                 />
                             ))}
                         </div>
@@ -352,6 +402,7 @@ export default function RecruitmentBoard() {
                                         setCandidateToDelete(candidate.id);
                                         setShowDeleteConfirmation(true);
                                     }}
+                                    onAddAssessment={() => handleOpenAssessment(candidate)}
                                 />
                             ))}
                         </div>
@@ -383,6 +434,7 @@ export default function RecruitmentBoard() {
                                         setCandidateToDelete(candidate.id);
                                         setShowDeleteConfirmation(true);
                                     }}
+                                    onAddAssessment={() => handleOpenAssessment(candidate)}
                                 />
                             ))}
                         </div>
@@ -414,6 +466,7 @@ export default function RecruitmentBoard() {
                                         setCandidateToDelete(candidate.id);
                                         setShowDeleteConfirmation(true);
                                     }}
+                                    onAddAssessment={() => handleOpenAssessment(candidate)}
                                 />
                             ))}
                         </div>
@@ -462,6 +515,15 @@ export default function RecruitmentBoard() {
                     </div>
                 </div>
             )}
+
+            {showAssessmentModal && assessmentTarget && (
+                <AssessmentModal
+                    candidateId={assessmentTarget.id}
+                candidateName={assessmentTarget.name}
+                onClose={() => setShowAssessmentModal(false)}
+                onSave={handleSaveAssessment}
+                />
+                )}
         </div>
     )
 }
@@ -472,9 +534,10 @@ interface CandidateCardProps {
     onSelect: () => void
     onMove: (stage: FrontendStage) => void
     onDelete: () => void
+    onAddAssessment: () => void;
 }
 
-function CandidateCard({candidate, isSelected, onSelect, onMove, onDelete}: CandidateCardProps) {
+function CandidateCard({candidate, isSelected, onSelect, onMove, onDelete, onAddAssessment}: CandidateCardProps) {
     const [showMenu, setShowMenu] = useState(false)
 
     const handleMenuToggle = (e: React.MouseEvent) => {
@@ -549,11 +612,17 @@ function CandidateCard({candidate, isSelected, onSelect, onMove, onDelete}: Cand
             </div>
 
             {candidate.assessment && (
-                <div className={styles.assessmentButton}>
-                    <PlusIcon/>
-                    Add Assessment
-                </div>
-            )}
+                        <div
+                          className={styles.assessmentButton}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onAddAssessment();
+                          }}
+                        >
+                            <PlusIcon/>
+                            Add Assessment
+                        </div>
+                    )}
         </div>
     )
 }
