@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"
 import Header from "./header.tsx"
 import styles from "./recruitment-board.module.css"
 import AddCandidateForm from "./add-candidate-form"
+import FilterPopup, {type FilterCriteria } from "./filter-popup"
 import type {
     FrontendStage,
     FrontendCandidate,
@@ -19,11 +20,20 @@ import {
 
 export default function RecruitmentBoard() {
     const [candidates, setCandidates] = useState<FrontendCandidate[]>([])
+    const [filteredCandidates, setFilteredCandidates] = useState<FrontendCandidate[]>([])
     const [selectedCandidate, setSelectedCandidate] = useState<string | null>(null)
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<string | null>(null)
     const [showAddCandidateForm, setShowAddCandidateForm] = useState<boolean>(false)
     const [selectedStage, setSelectedStage] = useState<ApplicationStage>(ApplicationStage.APPLYING_PERIOD)
+
+    // Filter state management
+    const [showFilterPopup, setShowFilterPopup] = useState<boolean>(false)
+    const [activeFilterType, setActiveFilterType] = useState<"date" | "score" | null>(null)
+    const [filterCriteria, setFilterCriteria] = useState<FilterCriteria>({
+        isActive: false
+    })
+    const [searchQuery, setSearchQuery] = useState<string>("")
 
     // Function to map backend candidate to frontend format
     const mapToFrontendCandidate = (candidate: Candidate): FrontendCandidate => {
@@ -55,12 +65,18 @@ export default function RecruitmentBoard() {
         fetchCandidates();
     }, []);
 
+    // Apply filters whenever candidates or filter criteria change
+    useEffect(() => {
+        applyFilters();
+    }, [candidates, filterCriteria, searchQuery]);
+
     const fetchCandidates = async () => {
         try {
             setLoading(true);
             const apiCandidates = await getAllCandidates();
             const frontendCandidates = apiCandidates.map(mapToFrontendCandidate);
             setCandidates(frontendCandidates);
+            setFilteredCandidates(frontendCandidates);
             setError(null);
         } catch (err) {
             console.error('Failed to fetch candidates:', err);
@@ -68,6 +84,49 @@ export default function RecruitmentBoard() {
         } finally {
             setLoading(false);
         }
+    };
+
+    // Function to apply all active filters
+    const applyFilters = () => {
+        let result = [...candidates];
+
+        // Apply search filter
+        if (searchQuery.trim() !== "") {
+            const query = searchQuery.toLowerCase();
+            result = result.filter(candidate =>
+                candidate.name.toLowerCase().includes(query)
+            );
+        }
+
+        // Apply date range filter
+        if (filterCriteria.isActive && filterCriteria.dateRange) {
+            const { startDate, endDate } = filterCriteria.dateRange;
+
+            if (startDate && endDate) {
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                // Set end date to end of day
+                end.setHours(23, 59, 59, 999);
+
+                result = result.filter(candidate => {
+                    const appliedDate = new Date(candidate.appliedDate);
+                    return appliedDate >= start && appliedDate <= end;
+                });
+            }
+        }
+
+        // Apply score range filter
+        if (filterCriteria.isActive && filterCriteria.scoreRange) {
+            const { minScore, maxScore } = filterCriteria.scoreRange;
+
+            if (minScore !== null && maxScore !== null) {
+                result = result.filter(candidate =>
+                    candidate.rating >= minScore && candidate.rating <= maxScore
+                );
+            }
+        }
+
+        setFilteredCandidates(result);
     };
 
     const moveCandidate = async (candidateId: string, newStage: FrontendStage) => {
@@ -97,10 +156,26 @@ export default function RecruitmentBoard() {
         setShowAddCandidateForm(true);
     };
 
-    const applyingCandidates = candidates.filter((c) => c.stage === "applying")
-    const screeningCandidates = candidates.filter((c) => c.stage === "screening")
-    const interviewCandidates = candidates.filter((c) => c.stage === "interview")
-    const testCandidates = candidates.filter((c) => c.stage === "test")
+    // Handle filter button clicks
+    const handleFilterClick = (filterType: "date" | "score") => {
+        setActiveFilterType(filterType);
+        setShowFilterPopup(true);
+    };
+
+    // Handle filter changes from popup
+    const handleFilterChange = (newFilters: FilterCriteria) => {
+        setFilterCriteria(newFilters);
+    };
+
+    // Handle search input changes
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(e.target.value);
+    };
+
+    const applyingCandidates = filteredCandidates.filter((c) => c.stage === "applying")
+    const screeningCandidates = filteredCandidates.filter((c) => c.stage === "screening")
+    const interviewCandidates = filteredCandidates.filter((c) => c.stage === "interview")
+    const testCandidates = filteredCandidates.filter((c) => c.stage === "test")
 
     if (loading) {
         return <div className={styles.loadingState}>Loading candidates...</div>;
@@ -117,17 +192,29 @@ export default function RecruitmentBoard() {
             <div className={styles.toolbarSection}>
                 <div className={styles.searchContainer}>
                     <SearchIcon />
-                    <input type="text" placeholder="Search" className={styles.searchInput} />
+                    <input
+                        type="text"
+                        placeholder="Search"
+                        className={styles.searchInput}
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                    />
                 </div>
 
                 <div className={styles.filters}>
-                    <button className={styles.filterButton}>
+                    <button
+                        className={`${styles.filterButton} ${filterCriteria.isActive && filterCriteria.dateRange ? styles.activeFilter : ''}`}
+                        onClick={() => handleFilterClick("date")}
+                    >
                         <CalendarIcon />
                         Date Range
                         <ChevronDownIcon />
                     </button>
 
-                    <button className={styles.filterButton}>
+                    <button
+                        className={`${styles.filterButton} ${filterCriteria.isActive && filterCriteria.scoreRange ? styles.activeFilter : ''}`}
+                        onClick={() => handleFilterClick("score")}
+                    >
                         <ScoreIcon />
                         Score Range
                         <ChevronDownIcon />
@@ -275,6 +362,15 @@ export default function RecruitmentBoard() {
                     initialStage={selectedStage}
                     onClose={() => setShowAddCandidateForm(false)}
                     onSuccess={fetchCandidates}
+                />
+            )}
+
+            {showFilterPopup && (
+                <FilterPopup
+                    onFilterChange={handleFilterChange}
+                    isOpen={showFilterPopup}
+                    onClose={() => setShowFilterPopup(false)}
+                    filterType={activeFilterType}
                 />
             )}
         </div>
