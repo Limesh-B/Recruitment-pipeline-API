@@ -47,6 +47,10 @@ public class CandidateService {
         return candidateRepository.findByStage(stage, pageable);
     }
 
+    public List<Candidate> searchCandidatesByName(String name) {
+        return candidateRepository.findByNameContainingIgnoreCase(name);
+    }
+
     public Candidate updateCandidate(Long id, Candidate candidateDetails) {
         Candidate candidate = candidateRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Candidate not found with id: " + id));

@@ -92,6 +92,12 @@ public class CandidateController {
         return ResponseEntity.ok(updatedCandidate);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<Candidate>> searchCandidatesByName(@RequestParam String name) {
+        List<Candidate> candidates = candidateService.searchCandidatesByName(name);
+        return ResponseEntity.ok(candidates);
+    }
+
     @PatchMapping("/{id}/stage")
     public ResponseEntity<?> updateCandidateStage(
             @PathVariable Long id,

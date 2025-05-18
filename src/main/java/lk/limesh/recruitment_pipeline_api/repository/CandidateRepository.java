@@ -13,4 +13,6 @@ import java.util.List;
 public interface CandidateRepository extends JpaRepository<Candidate, Long> {
     List<Candidate> findByStage(ApplicationStage stage);
     Page<Candidate> findByStage(ApplicationStage stage, Pageable pageable);
+
+    List<Candidate> findByNameContainingIgnoreCase(String name);
 }
