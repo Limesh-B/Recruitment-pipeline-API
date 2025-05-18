@@ -152,7 +152,6 @@ export default function AddCandidateForm({ initialStage, onClose, onSuccess }: A
                         >
                             <option value="PENDING">Pending</option>
                             <option value="COMPLETED">Completed</option>
-                            <option value="NOT_REQUIRED">Not Required</option>
                         </select>
                     </div>
                     {errors.submit && <p className={styles.submitError}>{errors.submit}</p>}

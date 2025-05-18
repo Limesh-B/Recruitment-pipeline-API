@@ -43,6 +43,10 @@ export default function RecruitmentBoard() {
     const [showAssessmentModal, setShowAssessmentModal] = useState<boolean>(false);
     const [assessmentTarget, setAssessmentTarget] = useState<FrontendCandidate | null>(null);
 
+    // Referral mode state
+    const [referMode, setReferMode] = useState<boolean>(false);
+    const [referralSet, setReferralSet] = useState<Set<string>>(new Set());
+
     // Function to map backend candidate to frontend format
     const mapToFrontendCandidate = (candidate: Candidate): FrontendCandidate => {
         return {
@@ -265,6 +269,45 @@ export default function RecruitmentBoard() {
         }
     };
 
+    // Referral helpers
+    const handleReferPeopleClick = () => {
+        setReferMode(true);
+        setReferralSet(new Set());
+    };
+    const toggleReferral = (id: string) => {
+        setReferralSet(prev => {
+            const next = new Set(prev);
+            next.has(id) ? next.delete(id) : next.add(id);
+            return next;
+        });
+    };
+    const handleConfirmReferrals = async () => {
+        try {
+            // Loop through each selected ID
+            for (const id of referralSet) {
+                const candidate = candidates.find(c => c.id === id);
+                if (!candidate) continue;
+
+                const payload = {
+                    name: candidate.name,
+                    stage: mapStageToBackend(candidate.stage),
+                    applicationDate: new Date(candidate.appliedDate).toISOString(), // reconstruct ISO
+                    overallScore: candidate.rating,
+                    referred: true,
+                    assessmentStatus: candidate.assessment ? 'PENDING' : 'COMPLETED'
+                };
+
+                await updateCandidate(parseInt(id, 10), payload);
+            }
+
+            await fetchCandidates();
+            setReferMode(false);
+            setReferralSet(new Set());
+        } catch (err) {
+            console.error('Failed to refer candidates:', err);
+        }
+    };
+
     const applyingCandidates = filteredCandidates.filter((c) => c.stage === "applying")
     const screeningCandidates = filteredCandidates.filter((c) => c.stage === "screening")
     const interviewCandidates = filteredCandidates.filter((c) => c.stage === "interview")
@@ -325,10 +368,30 @@ export default function RecruitmentBoard() {
                 </div>
 
                 <div className={styles.actions}>
-                    <button className={styles.actionButton}>
-                        <UsersIcon/>
-                        Refer People
-                    </button>
+                    <button
+                        className={styles.actionButton}
+                    onClick={handleReferPeopleClick}
+                    >
+                    <UsersIcon />
+                    Refer People
+                </button>
+                {/* only show during referral mode */}
+                {referMode && (
+                    <>
+                    <button
+                    className={styles.actionButton}
+                onClick={handleConfirmReferrals}
+                >
+                Confirm Referrals
+                </button>
+                <button
+                    className={styles.actionButton}
+                onClick={() => setReferMode(false)}
+                >
+                Cancel
+                </button>
+                </>
+                )}
 
                     <button className={styles.actionButton}>
                         <SettingsIcon/>
@@ -371,6 +434,9 @@ export default function RecruitmentBoard() {
                                         setShowDeleteConfirmation(true);
                                     }}
                                     onAddAssessment={() => handleOpenAssessment(candidate)}
+                                    onToggleReferral={() => toggleReferral(candidate.id)}
+                                    isReferralMode={referMode}
+                                    isSelectedForReferral={referralSet.has(candidate.id)}
                                 />
                             ))}
                         </div>
@@ -403,6 +469,9 @@ export default function RecruitmentBoard() {
                                         setShowDeleteConfirmation(true);
                                     }}
                                     onAddAssessment={() => handleOpenAssessment(candidate)}
+                                    onToggleReferral={() => toggleReferral(candidate.id)}
+                                    isReferralMode={referMode}
+                                    isSelectedForReferral={referralSet.has(candidate.id)}
                                 />
                             ))}
                         </div>
@@ -435,6 +504,9 @@ export default function RecruitmentBoard() {
                                         setShowDeleteConfirmation(true);
                                     }}
                                     onAddAssessment={() => handleOpenAssessment(candidate)}
+                                    onToggleReferral={() => toggleReferral(candidate.id)}
+                                    isReferralMode={referMode}
+                                    isSelectedForReferral={referralSet.has(candidate.id)}
                                 />
                             ))}
                         </div>
@@ -467,6 +539,9 @@ export default function RecruitmentBoard() {
                                         setShowDeleteConfirmation(true);
                                     }}
                                     onAddAssessment={() => handleOpenAssessment(candidate)}
+                                    onToggleReferral={() => toggleReferral(candidate.id)}
+                                    isReferralMode={referMode}
+                                    isSelectedForReferral={referralSet.has(candidate.id)}
                                 />
                             ))}
                         </div>
@@ -534,10 +609,13 @@ interface CandidateCardProps {
     onSelect: () => void
     onMove: (stage: FrontendStage) => void
     onDelete: () => void
+    onToggleReferral?: () => void;
+    isReferralMode?: boolean;
+    isSelectedForReferral?: boolean;
     onAddAssessment: () => void;
 }
 
-function CandidateCard({candidate, isSelected, onSelect, onMove, onDelete, onAddAssessment}: CandidateCardProps) {
+function CandidateCard({candidate, isSelected, onSelect, onMove, onDelete, onAddAssessment, onToggleReferral, isReferralMode = false, isSelectedForReferral = false}: CandidateCardProps) {
     const [showMenu, setShowMenu] = useState(false)
 
     const handleMenuToggle = (e: React.MouseEvent) => {
@@ -545,8 +623,17 @@ function CandidateCard({candidate, isSelected, onSelect, onMove, onDelete, onAdd
         setShowMenu(!showMenu)
     }
 
+    // decide click behavior
+    const handleCardClick = () => {
+        if (isReferralMode && onToggleReferral) {
+            onToggleReferral();
+        } else {
+            onSelect();
+        }
+    };
+
     return (
-        <div className={`${styles.candidateCard} ${isSelected ? styles.selectedCard : ""}`} onClick={onSelect}>
+        <div className={`${styles.candidateCard} ${isSelected ? styles.selectedCard : ""} ${isReferralMode && isSelectedForReferral ? styles.referralSelected : ""}`} onClick={handleCardClick}>
             <div className={styles.candidateHeader}>
                 <div className={styles.candidateInfo}>
                     {candidate.avatar ? (

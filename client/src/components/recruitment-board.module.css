@@ -483,6 +483,11 @@
     margin-bottom: 0.5rem;
 }
 
+.referralSelected {
+    outline: 2px dashed #10b981;
+    background-color: rgba(16, 185, 129, 0.1);
+}
+
 @media (max-width: 1280px) {
     .board {
         overflow-x: auto;
