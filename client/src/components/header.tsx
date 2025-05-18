@@ -69,43 +69,43 @@ export default function Header() {
                     Candidates
                 </button>
                 <button
-                    className={`${styles.tab} ${activeTab === "Job Info" ? styles.activeTab : ""}`}
-                    onClick={() => setActiveTab("Job Info")}
+                    className={`${styles.tab} ${styles.disabledTab}`}
+                    disabled
                 >
                     <InfoIcon />
                     Job Info
                 </button>
                 <button
-                    className={`${styles.tab} ${activeTab === "Calendar" ? styles.activeTab : ""}`}
-                    onClick={() => setActiveTab("Calendar")}
+                    className={`${styles.tab} ${styles.disabledTab}`}
+                    disabled
                 >
                     <CalendarIcon />
                     Calendar
                 </button>
                 <button
-                    className={`${styles.tab} ${activeTab === "Score Card" ? styles.activeTab : ""}`}
-                    onClick={() => setActiveTab("Score Card")}
+                    className={`${styles.tab} ${styles.disabledTab}`}
+                    disabled
                 >
                     <ClipboardIcon />
                     Score Card
                 </button>
                 <button
-                    className={`${styles.tab} ${activeTab === "Activity" ? styles.activeTab : ""}`}
-                    onClick={() => setActiveTab("Activity")}
+                    className={`${styles.tab} ${styles.disabledTab}`}
+                    disabled
                 >
                     <ActivityIcon />
                     Activity
                 </button>
                 <button
-                    className={`${styles.tab} ${activeTab === "Application Form" ? styles.activeTab : ""}`}
-                    onClick={() => setActiveTab("Application Form")}
+                    className={`${styles.tab} ${styles.disabledTab}`}
+                    disabled
                 >
                     <FormIcon />
                     Application Form
                 </button>
                 <button
-                    className={`${styles.tab} ${activeTab === "Automation" ? styles.activeTab : ""}`}
-                    onClick={() => setActiveTab("Automation")}
+                    className={`${styles.tab} ${styles.disabledTab}`}
+                    disabled
                 >
                     <AutomationIcon />
                     Automation

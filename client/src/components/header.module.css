@@ -189,6 +189,16 @@
     background-color: #4f46e5;
 }
 
+.tab.disabledTab {
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.tab.disabledTab:hover {
+    color: #cbd5e1;
+    background: transparent;
+}
+
 .tabBadge {
     display: inline-flex;
     align-items: center;

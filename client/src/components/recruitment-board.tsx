@@ -245,7 +245,10 @@ export default function RecruitmentBoard() {
                         <ChevronDownIcon />
                     </button>
 
-                    <button className={styles.filterButton}>
+                    <button
+                        className={`${styles.filterButton} ${styles.disabledFilterButton}`}
+                        disabled
+                    >
                         <FilterIcon />
                         Advance Filter
                         <ChevronDownIcon />

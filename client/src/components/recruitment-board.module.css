@@ -58,6 +58,10 @@
     background-color: #f8fafc;
 }
 
+.filterButton.disabledFilterButton {
+    pointer-events: none;
+}
+
 .actions {
     display: flex;
     align-items: center;
