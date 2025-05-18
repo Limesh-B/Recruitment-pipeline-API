@@ -1,3 +1,4 @@
+
 import type React from "react"
 import { useState, useEffect } from "react"
 import Header from "./header.tsx"
@@ -16,26 +17,31 @@ import {
     searchCandidatesByName,
     updateCandidateStage,
     mapStageToFrontend,
-    mapStageToBackend
+    mapStageToBackend,
+    deleteCandidate
 } from "../services/candidateApi.ts";
 
 export default function RecruitmentBoard() {
-    const [candidates, setCandidates] = useState<FrontendCandidate[]>([])
-    const [filteredCandidates, setFilteredCandidates] = useState<FrontendCandidate[]>([])
-    const [selectedCandidate, setSelectedCandidate] = useState<string | null>(null)
-    const [loading, setLoading] = useState<boolean>(true)
-    const [error, setError] = useState<string | null>(null)
-    const [showAddCandidateForm, setShowAddCandidateForm] = useState<boolean>(false)
-    const [selectedStage, setSelectedStage] = useState<ApplicationStage>(ApplicationStage.APPLYING_PERIOD)
+    const [candidates, setCandidates] = useState<FrontendCandidate[]>([]);
+    const [filteredCandidates, setFilteredCandidates] = useState<FrontendCandidate[]>([]);
+    const [selectedCandidate, setSelectedCandidate] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+    const [showAddCandidateForm, setShowAddCandidateForm] = useState<boolean>(false);
+    const [selectedStage, setSelectedStage] = useState<ApplicationStage>(ApplicationStage.APPLYING_PERIOD);
 
-    // Filter state management
-    const [showFilterPopup, setShowFilterPopup] = useState<boolean>(false)
-    const [activeFilterType, setActiveFilterType] = useState<"date" | "score" | null>(null)
-    const [filterCriteria, setFilterCriteria] = useState<FilterCriteria>({
-        isActive: false
-    })
-    const [searchInput, setSearchInput] = useState<string>("")
-    const [searchQuery, setSearchQuery] = useState<string>("")
+    // Filter state
+    const [showFilterPopup, setShowFilterPopup] = useState<boolean>(false);
+    const [activeFilterType, setActiveFilterType] = useState<"date" | "score" | null>(null);
+    const [filterCriteria, setFilterCriteria] = useState<FilterCriteria>({ isActive: false });
+
+    // Search state
+    const [searchInput, setSearchInput] = useState<string>("");
+    const [searchQuery, setSearchQuery] = useState<string>("");
+
+    // Delete-confirmation modal state
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState<boolean>(false);
+    const [candidateToDelete, setCandidateToDelete] = useState<string | null>(null);
 
     // Function to map backend candidate to frontend format
     const mapToFrontendCandidate = (candidate: Candidate): FrontendCandidate => {
@@ -175,26 +181,45 @@ export default function RecruitmentBoard() {
     };
 
     const handleSearchKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-           if (e.key === 'Enter') {
-                 const q = searchInput.trim();
-                 setSearchQuery(q);
+        if (e.key === 'Enter') {
+            const q = searchInput.trim();
+            setSearchQuery(q);
 
-                     if (q === "") {
-                       await fetchCandidates();
-                     } else {
-                       setLoading(true);
-                       try {
-                             const apiResults = await searchCandidatesByName(q);
-                             setCandidates(apiResults.map(mapToFrontendCandidate));
-                           } catch (err) {
-                             console.error("Search failed:", err);
-                             setError("Search failed. Please try again.");
-                           } finally {
-                             setLoading(false);
-                           }
-                     }
-               }
-         };
+            if (q === "") {
+                await fetchCandidates();
+            } else {
+                setLoading(true);
+                try {
+                    const apiResults = await searchCandidatesByName(q);
+                    setCandidates(apiResults.map(mapToFrontendCandidate));
+                } catch (err) {
+                    console.error("Search failed:", err);
+                    setError("Search failed. Please try again.");
+                } finally {
+                    setLoading(false);
+                }
+            }
+        }
+    };
+
+    // FIXED: Moved handleDeleteCandidate inside the component
+    const handleDeleteCandidate = async (candidateId: string) => {
+        try {
+            const id = parseInt(candidateId);
+            await deleteCandidate(id);
+
+            // After successful deletion, refresh the candidates list
+            await fetchCandidates();
+            setError(null);
+        } catch (err) {
+            console.error(`Error deleting candidate ${candidateId}:`, err);
+            setError('Failed to delete candidate. Please try again.');
+        } finally {
+            // Close the confirmation modal
+            setShowDeleteConfirmation(false);
+            setCandidateToDelete(null);
+        }
+    };
 
     const applyingCandidates = filteredCandidates.filter((c) => c.stage === "applying")
     const screeningCandidates = filteredCandidates.filter((c) => c.stage === "screening")
@@ -297,6 +322,10 @@ export default function RecruitmentBoard() {
                                     isSelected={selectedCandidate === candidate.id}
                                     onSelect={() => setSelectedCandidate(candidate.id === selectedCandidate ? null : candidate.id)}
                                     onMove={(stage) => moveCandidate(candidate.id, stage)}
+                                    onDelete={() => {
+                                        setCandidateToDelete(candidate.id);
+                                        setShowDeleteConfirmation(true);
+                                    }}
                                 />
                             ))}
                         </div>
@@ -324,6 +353,10 @@ export default function RecruitmentBoard() {
                                     isSelected={selectedCandidate === candidate.id}
                                     onSelect={() => setSelectedCandidate(candidate.id === selectedCandidate ? null : candidate.id)}
                                     onMove={(stage) => moveCandidate(candidate.id, stage)}
+                                    onDelete={() => {
+                                        setCandidateToDelete(candidate.id);
+                                        setShowDeleteConfirmation(true);
+                                    }}
                                 />
                             ))}
                         </div>
@@ -351,6 +384,10 @@ export default function RecruitmentBoard() {
                                     isSelected={selectedCandidate === candidate.id}
                                     onSelect={() => setSelectedCandidate(candidate.id === selectedCandidate ? null : candidate.id)}
                                     onMove={(stage) => moveCandidate(candidate.id, stage)}
+                                    onDelete={() => {
+                                        setCandidateToDelete(candidate.id);
+                                        setShowDeleteConfirmation(true);
+                                    }}
                                 />
                             ))}
                         </div>
@@ -378,6 +415,10 @@ export default function RecruitmentBoard() {
                                     isSelected={selectedCandidate === candidate.id}
                                     onSelect={() => setSelectedCandidate(candidate.id === selectedCandidate ? null : candidate.id)}
                                     onMove={(stage) => moveCandidate(candidate.id, stage)}
+                                    onDelete={() => {
+                                        setCandidateToDelete(candidate.id);
+                                        setShowDeleteConfirmation(true);
+                                    }}
                                 />
                             ))}
                         </div>
@@ -401,6 +442,31 @@ export default function RecruitmentBoard() {
                     filterType={activeFilterType}
                 />
             )}
+            {showDeleteConfirmation && candidateToDelete && (
+                <div className={styles.modalOverlay}>
+                    <div className={styles.confirmationModal}>
+                        <h3>Confirm Deletion</h3>
+                        <p>Are you sure you want to delete this candidate? This action cannot be undone.</p>
+                        <div className={styles.modalActions}>
+                            <button
+                                className={styles.cancelButton}
+                                onClick={() => {
+                                    setShowDeleteConfirmation(false);
+                                    setCandidateToDelete(null);
+                                }}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className={styles.deleteButton}
+                                onClick={() => handleDeleteCandidate(candidateToDelete)}
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
@@ -410,9 +476,10 @@ interface CandidateCardProps {
     isSelected: boolean
     onSelect: () => void
     onMove: (stage: FrontendStage) => void
+    onDelete: () => void
 }
 
-function CandidateCard({ candidate, isSelected, onSelect, onMove }: CandidateCardProps) {
+function CandidateCard({ candidate, isSelected, onSelect, onMove, onDelete }: CandidateCardProps) {
     const [showMenu, setShowMenu] = useState(false)
 
     const handleMenuToggle = (e: React.MouseEvent) => {
@@ -448,7 +515,12 @@ function CandidateCard({ candidate, isSelected, onSelect, onMove }: CandidateCar
                             <div role="button" onClick={() => onMove("test")}>Move to Test</div>
                             <div className={styles.menuDivider}></div>
                             <div role="button">View Profile</div>
-                            <div role="button">Send Email</div>
+                            <div role="button" onClick={(e) => {
+                                e.stopPropagation();
+                                setShowMenu(false);
+                                onDelete();
+                            }} className={styles.deleteOption}>Delete
+                            </div>
                         </div>
                     )}
                 </button>
@@ -456,7 +528,7 @@ function CandidateCard({ candidate, isSelected, onSelect, onMove }: CandidateCar
 
             <div className={styles.candidateRating}>
                 <div className={styles.stars}>
-                    {Array.from({ length: 5 }).map((_, i) => (
+                    {Array.from({length: 5 }).map((_, i) => (
                         <span key={i} className={i < candidate.rating ? styles.starFilled : styles.star}>
                             ★
                         </span>

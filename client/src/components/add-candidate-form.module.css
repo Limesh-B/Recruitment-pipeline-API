@@ -9,6 +9,7 @@
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    animation: modalFadeIn 0.3s ease-out;
 }
 
 .modalContent {
@@ -18,6 +19,23 @@
     max-width: 500px;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     overflow: hidden;
+    animation: modalSlideIn 0.4s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 .modalHeader {
@@ -47,6 +65,7 @@
     width: 2rem;
     height: 2rem;
     border-radius: 9999px;
+    transition: background-color 0.2s, color 0.2s;
 }
 
 .closeButton:hover {
