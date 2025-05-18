@@ -23,6 +23,7 @@ cd Recruitment-pipeline-API
 ### 2. Backend Setup
 
 #### a. Navigate to the API folder
+Select the root folder or else .env file might not get loaded.
 ```bash
 cd Recruitment-pipeline-API
 ```
