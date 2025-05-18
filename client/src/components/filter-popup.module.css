@@ -172,7 +172,6 @@
     border-radius: 3px;
 }
 
-/* For the track color between min and max sliders */
 .rangeSliderContainer::before {
     content: "";
     position: absolute;
@@ -257,7 +256,6 @@
     }
 }
 
-/* Media queries for responsiveness */
 @media (max-width: 640px) {
     .filterPopup {
         width: 90%;

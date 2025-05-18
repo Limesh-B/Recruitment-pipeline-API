@@ -1,4 +1,4 @@
-// candidateApi.ts - API service for candidate operations
+// API service for candidate operations
 import { ApplicationStage } from '../types/ApplicationStage';
 import type {Candidate, FrontendStage} from '../types/candidate';
 
@@ -64,7 +64,7 @@ export const getCandidatesByStage = async (stage: ApplicationStage): Promise<Can
     return response.json();
 };
 
-// Update just the stage of a candidate (for drag-and-drop)
+// Update just the stage of a candidate
 export const updateCandidateStage = async (id: number, stage: ApplicationStage): Promise<Candidate> => {
     const response = await fetch(`${API_BASE_URL}/${id}/stage`, {
         method: 'PATCH',

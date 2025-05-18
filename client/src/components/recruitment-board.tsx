@@ -161,7 +161,7 @@ export default function RecruitmentBoard() {
             await updateCandidateStage(id, backendStage);
         } catch (err) {
             console.error(`Error moving candidate ${candidateId} to ${newStage}:`, err);
-            // If the API call fails, refresh all candidates to ensure UI reflects server state
+            // If the API call fails, refresh all candidates to make sure UI reflects server state
             const apiCandidates = await getAllCandidates();
             setCandidates(apiCandidates.map(mapToFrontendCandidate));
             setError('Failed to update candidate. Please try again.');
@@ -238,7 +238,7 @@ export default function RecruitmentBoard() {
             const payload = {
                 name: current.name,
                 stage: mapStageToBackend(current.stage),
-                applicationDate: new Date(current.appliedDate).toISOString(),  // or however you store it
+                applicationDate: new Date(current.appliedDate).toISOString(),
                 referred: current.isReferred,
                 overallScore: rating,
                 assessmentStatus: 'COMPLETED',
@@ -707,7 +707,7 @@ function CandidateCard({candidate, isSelected, onSelect, onMove, onDelete, onVie
             </div>
 
             <div className={styles.candidateFooter}>
-                {/* stars only when assessment is NOT pending */}
+                {/* stars only when assessment is not pending */}
                 {!candidate.assessment && (
                     <div className={styles.candidateRating}>
                         <div className={styles.stars}>

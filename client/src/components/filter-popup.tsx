@@ -95,7 +95,6 @@ export default function FilterPopup({ onFilterChange, isOpen, onClose, filterTyp
         onClose();
     };
 
-    // If not open, don't render
     if (!isOpen) return null;
 
     return (

@@ -1,4 +1,3 @@
-// types/candidate.ts
 import { ApplicationStage } from './ApplicationStage';
 
 // Backend candidate model
