@@ -1,6 +1,8 @@
 package lk.limesh.recruitment_pipeline_api.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -23,6 +25,8 @@ public class Candidate {
     @NotNull(message = "Application date is required")
     private LocalDate applicationDate;
 
+    @Min(value = 1, message = "Overall score must be at least 1")
+    @Max(value = 5, message = "Overall score must be at most 5")
     private Double overallScore;
 
     private Boolean referred;
