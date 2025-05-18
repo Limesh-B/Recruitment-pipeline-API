@@ -1,0 +1,146 @@
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modalContent {
+    background-color: white;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.modalHeader {
+    padding: 16px 24px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modalHeader h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #6b7280;
+    cursor: pointer;
+}
+
+.form {
+    padding: 24px;
+}
+
+.formGroup {
+    margin-bottom: 20px;
+}
+
+.formGroup label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #374151;
+}
+
+.errorMessage {
+    color: #ef4444;
+    margin: 16px 0;
+    padding: 12px;
+    background-color: #fef2f2;
+    border: 1px solid #fee2e2;
+    border-radius: 4px;
+}
+
+.formActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.cancelButton {
+    padding: 8px 16px;
+    background-color: white;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    color: #374151;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.submitButton {
+    padding: 8px 16px;
+    background-color: #4f46e5;
+    border: 1px solid #4338ca;
+    border-radius: 4px;
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.submitButton:hover {
+    background-color: #4338ca;
+}
+
+.submitButton:disabled,
+.cancelButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Star rating styles */
+.rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.rating:not(:checked) > input {
+    position: absolute;
+    appearance: none;
+}
+
+.rating:not(:checked) > label {
+    float: right;
+    cursor: pointer;
+    font-size: 30px;
+    color: #666;
+}
+
+.rating:not(:checked) > label:before {
+    content: '★';
+}
+
+.rating > input:checked + label:hover,
+.rating > input:checked + label:hover ~ label,
+.rating > input:checked ~ label:hover,
+.rating > input:checked ~ label:hover ~ label,
+.rating > label:hover ~ input:checked ~ label {
+    color: #e58e09;
+}
+
+.rating:not(:checked) > label:hover,
+.rating:not(:checked) > label:hover ~ label {
+    color: #ff9e0b;
+}
+
+.rating > input:checked ~ label {
+    color: #ffa723;
+}

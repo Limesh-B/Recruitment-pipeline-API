@@ -10,7 +10,7 @@ interface AddCandidateFormProps {
 }
 
 interface FormErrors {
-    submit: any;
+    submit?: string;
     name?: string;
     applicationDate?: string;
     overallScore?: string;
@@ -23,15 +23,13 @@ export default function AddCandidateForm({ initialStage, onClose, onSuccess }: A
         applicationDate: new Date().toISOString().split('T')[0], // Default to today
         overallScore: 3,
         referred: false,
-        assessmentStatus: 'PENDING',
+        assessmentStatus: 'PENDING' as string,
         stage: initialStage
     });
-    const [errors, setErrors] = useState<FormErrors>({ submit: undefined });
+    const [errors, setErrors] = useState<FormErrors>({});
 
     const validateForm = (): boolean => {
-        const newErrors: FormErrors = {
-            submit: undefined
-        };
+        const newErrors: FormErrors = {};
         let isValid = true;
 
         if (!formData.name.trim()) {
@@ -42,18 +40,13 @@ export default function AddCandidateForm({ initialStage, onClose, onSuccess }: A
         if (!formData.applicationDate) {
             newErrors.applicationDate = 'Application date is required';
             isValid = false;
-        } else {
-            // Validate date format
-            const datePattern = /^\d{4}-\d{2}-\d{2}$/;
-            if (!datePattern.test(formData.applicationDate)) {
-                newErrors.applicationDate = 'Invalid date format (YYYY-MM-DD)';
-                isValid = false;
-            }
         }
 
-        if (formData.overallScore < 1 || formData.overallScore > 5) {
-            newErrors.overallScore = 'Score must be between 1 and 5';
-            isValid = false;
+        if (formData.assessmentStatus !== 'PENDING') {
+            if (formData.overallScore < 1 || formData.overallScore > 5) {
+                newErrors.overallScore = 'Score must be between 1 and 5';
+                isValid = false;
+            }
         }
 
         setErrors(newErrors);
@@ -62,7 +55,6 @@ export default function AddCandidateForm({ initialStage, onClose, onSuccess }: A
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
-
         setFormData(prev => ({
             ...prev,
             [name]: type === 'checkbox'
@@ -75,18 +67,13 @@ export default function AddCandidateForm({ initialStage, onClose, onSuccess }: A
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        if (!validateForm()) {
-            return;
-        }
-
+        if (!validateForm()) return;
         try {
             setIsSubmitting(true);
             await createCandidate(formData);
             onSuccess();
             onClose();
-        } catch (error) {
-            console.error('Failed to create candidate:', error);
+        } catch {
             setErrors(prev => ({
                 ...prev,
                 submit: 'Failed to create candidate. Please try again.'
@@ -103,7 +90,6 @@ export default function AddCandidateForm({ initialStage, onClose, onSuccess }: A
                     <h2>Add New Candidate</h2>
                     <button className={styles.closeButton} onClick={onClose}>×</button>
                 </div>
-
                 <form onSubmit={handleSubmit} className={styles.form}>
                     <div className={styles.formGroup}>
                         <label htmlFor="name">Full Name*</label>
@@ -117,7 +103,6 @@ export default function AddCandidateForm({ initialStage, onClose, onSuccess }: A
                         />
                         {errors.name && <p className={styles.errorText}>{errors.name}</p>}
                     </div>
-
                     <div className={styles.formGroup}>
                         <label htmlFor="applicationDate">Application Date*</label>
                         <input
@@ -130,22 +115,22 @@ export default function AddCandidateForm({ initialStage, onClose, onSuccess }: A
                         />
                         {errors.applicationDate && <p className={styles.errorText}>{errors.applicationDate}</p>}
                     </div>
-
-                    <div className={styles.formGroup}>
-                        <label htmlFor="overallScore">Overall Score (1-5)*</label>
-                        <input
-                            type="number"
-                            id="overallScore"
-                            name="overallScore"
-                            min="1"
-                            max="5"
-                            value={formData.overallScore}
-                            onChange={handleChange}
-                            className={errors.overallScore ? styles.inputError : ''}
-                        />
-                        {errors.overallScore && <p className={styles.errorText}>{errors.overallScore}</p>}
-                    </div>
-
+                    {formData.assessmentStatus !== 'PENDING' && (
+                        <div className={styles.formGroup}>
+                            <label htmlFor="overallScore">Overall Score (1-5)*</label>
+                            <input
+                                type="number"
+                                id="overallScore"
+                                name="overallScore"
+                                min="1"
+                                max="5"
+                                value={formData.overallScore}
+                                onChange={handleChange}
+                                className={errors.overallScore ? styles.inputError : ''}
+                            />
+                            {errors.overallScore && <p className={styles.errorText}>{errors.overallScore}</p>}
+                        </div>
+                    )}
                     <div className={styles.formGroup}>
                         <label className={styles.checkboxLabel}>
                             <input
@@ -157,7 +142,6 @@ export default function AddCandidateForm({ initialStage, onClose, onSuccess }: A
                             Referred Candidate
                         </label>
                     </div>
-
                     <div className={styles.formGroup}>
                         <label htmlFor="assessmentStatus">Assessment Status</label>
                         <select
@@ -171,23 +155,12 @@ export default function AddCandidateForm({ initialStage, onClose, onSuccess }: A
                             <option value="NOT_REQUIRED">Not Required</option>
                         </select>
                     </div>
-
                     {errors.submit && <p className={styles.submitError}>{errors.submit}</p>}
-
                     <div className={styles.formActions}>
-                        <button
-                            type="button"
-                            className={styles.cancelButton}
-                            onClick={onClose}
-                            disabled={isSubmitting}
-                        >
+                        <button type="button" className={styles.cancelButton} onClick={onClose} disabled={isSubmitting}>
                             Cancel
                         </button>
-                        <button
-                            type="submit"
-                            className={styles.submitButton}
-                            disabled={isSubmitting}
-                        >
+                        <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
                             {isSubmitting ? 'Adding...' : 'Add Candidate'}
                         </button>
                     </div>

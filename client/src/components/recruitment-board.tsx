@@ -1,24 +1,19 @@
-
 import type React from "react"
-import { useState, useEffect } from "react"
+import {useEffect, useState} from "react"
 import Header from "./header.tsx"
 import styles from "./recruitment-board.module.css"
 import AddCandidateForm from "./add-candidate-form"
-import FilterPopup, {type FilterCriteria } from "./filter-popup"
-import type {
-    FrontendStage,
-    FrontendCandidate,
-    Candidate,
-} from "../types/candidate"
-import { ApplicationStage } from "../types/ApplicationStage"
+import FilterPopup, {type FilterCriteria} from "./filter-popup"
+import type {Candidate, FrontendCandidate, FrontendStage,} from "../types/candidate"
+import {ApplicationStage} from "../types/ApplicationStage"
 
 import {
+    deleteCandidate,
     getAllCandidates,
-    searchCandidatesByName,
-    updateCandidateStage,
-    mapStageToFrontend,
     mapStageToBackend,
-    deleteCandidate
+    mapStageToFrontend,
+    searchCandidatesByName,
+    updateCandidateStage
 } from "../services/candidateApi.ts";
 
 export default function RecruitmentBoard() {
@@ -33,7 +28,7 @@ export default function RecruitmentBoard() {
     // Filter state
     const [showFilterPopup, setShowFilterPopup] = useState<boolean>(false);
     const [activeFilterType, setActiveFilterType] = useState<"date" | "score" | null>(null);
-    const [filterCriteria, setFilterCriteria] = useState<FilterCriteria>({ isActive: false });
+    const [filterCriteria, setFilterCriteria] = useState<FilterCriteria>({isActive: false});
 
     // Search state
     const [searchInput, setSearchInput] = useState<string>("");
@@ -108,7 +103,7 @@ export default function RecruitmentBoard() {
 
         // Apply date range filter
         if (filterCriteria.isActive && filterCriteria.dateRange) {
-            const { startDate, endDate } = filterCriteria.dateRange;
+            const {startDate, endDate} = filterCriteria.dateRange;
 
             if (startDate && endDate) {
                 const start = new Date(startDate);
@@ -125,7 +120,7 @@ export default function RecruitmentBoard() {
 
         // Apply score range filter
         if (filterCriteria.isActive && filterCriteria.scoreRange) {
-            const { minScore, maxScore } = filterCriteria.scoreRange;
+            const {minScore, maxScore} = filterCriteria.scoreRange;
 
             if (minScore !== null && maxScore !== null) {
                 result = result.filter(candidate =>
@@ -142,7 +137,7 @@ export default function RecruitmentBoard() {
             // First update locally for quick UI feedback
             setCandidates(
                 candidates.map((candidate) =>
-                    candidate.id === candidateId ? { ...candidate, stage: newStage } : candidate
+                    candidate.id === candidateId ? {...candidate, stage: newStage} : candidate
                 )
             );
 
@@ -236,11 +231,11 @@ export default function RecruitmentBoard() {
 
     return (
         <div className={styles.container}>
-            <Header />
+            <Header/>
 
             <div className={styles.toolbarSection}>
                 <div className={styles.searchContainer}>
-                    <SearchIcon />
+                    <SearchIcon/>
                     <input
                         type="text"
                         placeholder="Search by Name"
@@ -256,44 +251,44 @@ export default function RecruitmentBoard() {
                         className={`${styles.filterButton} ${filterCriteria.isActive && filterCriteria.dateRange ? styles.activeFilter : ''}`}
                         onClick={() => handleFilterClick("date")}
                     >
-                        <CalendarIcon />
+                        <CalendarIcon/>
                         Date Range
-                        <ChevronDownIcon />
+                        <ChevronDownIcon/>
                     </button>
 
                     <button
                         className={`${styles.filterButton} ${filterCriteria.isActive && filterCriteria.scoreRange ? styles.activeFilter : ''}`}
                         onClick={() => handleFilterClick("score")}
                     >
-                        <ScoreIcon />
+                        <ScoreIcon/>
                         Score Range
-                        <ChevronDownIcon />
+                        <ChevronDownIcon/>
                     </button>
 
                     <button
                         className={`${styles.filterButton} ${styles.disabledFilterButton}`}
                         disabled
                     >
-                        <FilterIcon />
+                        <FilterIcon/>
                         Advance Filter
-                        <ChevronDownIcon />
+                        <ChevronDownIcon/>
                     </button>
                 </div>
 
                 <div className={styles.actions}>
                     <button className={styles.actionButton}>
-                        <UsersIcon />
+                        <UsersIcon/>
                         Refer People
                     </button>
 
                     <button className={styles.actionButton}>
-                        <SettingsIcon />
+                        <SettingsIcon/>
                     </button>
 
                     <button className={styles.actionButton}>
-                        <KanbanIcon />
+                        <KanbanIcon/>
                         Kanban
-                        <ChevronDownIcon />
+                        <ChevronDownIcon/>
                     </button>
                 </div>
             </div>
@@ -301,7 +296,7 @@ export default function RecruitmentBoard() {
             <div className={styles.boardContainer}>
                 <div className={styles.board}>
                     <div className={styles.column}>
-                        <div className={styles.columnHeader} style={{ backgroundColor: "#f97316" }}>
+                        <div className={styles.columnHeader} style={{backgroundColor: "#f97316"}}>
                             <h3 className={styles.columnTitle}>Applying Period</h3>
                             <div className={styles.columnActions}>
                                 <span className={styles.columnCount}>{applyingCandidates.length}</span>
@@ -310,7 +305,7 @@ export default function RecruitmentBoard() {
                                     onClick={() => handleAddCandidate(ApplicationStage.APPLYING_PERIOD)}
                                     title="Add Candidate"
                                 >
-                                    <PlusIcon />
+                                    <PlusIcon/>
                                 </button>
                             </div>
                         </div>
@@ -332,7 +327,7 @@ export default function RecruitmentBoard() {
                     </div>
 
                     <div className={styles.column}>
-                        <div className={styles.columnHeader} style={{ backgroundColor: "#a855f7" }}>
+                        <div className={styles.columnHeader} style={{backgroundColor: "#a855f7"}}>
                             <h3 className={styles.columnTitle}>Screening</h3>
                             <div className={styles.columnActions}>
                                 <span className={styles.columnCount}>{screeningCandidates.length}</span>
@@ -341,7 +336,7 @@ export default function RecruitmentBoard() {
                                     onClick={() => handleAddCandidate(ApplicationStage.SCREENING)}
                                     title="Add Candidate"
                                 >
-                                    <PlusIcon />
+                                    <PlusIcon/>
                                 </button>
                             </div>
                         </div>
@@ -363,7 +358,7 @@ export default function RecruitmentBoard() {
                     </div>
 
                     <div className={styles.column}>
-                        <div className={styles.columnHeader} style={{ backgroundColor: "#0ea5e9" }}>
+                        <div className={styles.columnHeader} style={{backgroundColor: "#0ea5e9"}}>
                             <h3 className={styles.columnTitle}>Interview</h3>
                             <div className={styles.columnActions}>
                                 <span className={styles.columnCount}>{interviewCandidates.length}</span>
@@ -372,7 +367,7 @@ export default function RecruitmentBoard() {
                                     onClick={() => handleAddCandidate(ApplicationStage.INTERVIEW)}
                                     title="Add Candidate"
                                 >
-                                    <PlusIcon />
+                                    <PlusIcon/>
                                 </button>
                             </div>
                         </div>
@@ -394,7 +389,7 @@ export default function RecruitmentBoard() {
                     </div>
 
                     <div className={styles.column}>
-                        <div className={styles.columnHeader} style={{ backgroundColor: "#06b6d4" }}>
+                        <div className={styles.columnHeader} style={{backgroundColor: "#06b6d4"}}>
                             <h3 className={styles.columnTitle}>Test</h3>
                             <div className={styles.columnActions}>
                                 <span className={styles.columnCount}>{testCandidates.length}</span>
@@ -403,7 +398,7 @@ export default function RecruitmentBoard() {
                                     onClick={() => handleAddCandidate(ApplicationStage.TEST)}
                                     title="Add Candidate"
                                 >
-                                    <PlusIcon />
+                                    <PlusIcon/>
                                 </button>
                             </div>
                         </div>
@@ -479,7 +474,7 @@ interface CandidateCardProps {
     onDelete: () => void
 }
 
-function CandidateCard({ candidate, isSelected, onSelect, onMove, onDelete }: CandidateCardProps) {
+function CandidateCard({candidate, isSelected, onSelect, onMove, onDelete}: CandidateCardProps) {
     const [showMenu, setShowMenu] = useState(false)
 
     const handleMenuToggle = (e: React.MouseEvent) => {
@@ -492,9 +487,11 @@ function CandidateCard({ candidate, isSelected, onSelect, onMove, onDelete }: Ca
             <div className={styles.candidateHeader}>
                 <div className={styles.candidateInfo}>
                     {candidate.avatar ? (
-                        <img src={candidate.avatar || "/placeholder.svg"} alt={candidate.name} className={styles.candidateAvatar} />
+                        <img src={candidate.avatar || "/placeholder.svg"} alt={candidate.name}
+                             className={styles.candidateAvatar}/>
                     ) : (
-                        <div className={styles.candidateInitial} style={{ backgroundColor: candidate.color || "#4f46e5" }}>
+                        <div className={styles.candidateInitial}
+                             style={{backgroundColor: candidate.color || "#4f46e5"}}>
                             {candidate.name.charAt(0)}
                         </div>
                     )}
@@ -505,7 +502,7 @@ function CandidateCard({ candidate, isSelected, onSelect, onMove, onDelete }: Ca
                 </div>
 
                 <button className={styles.menuButton} onClick={handleMenuToggle}>
-                    <MoreIcon />
+                    <MoreIcon/>
 
                     {showMenu && (
                         <div className={styles.menuDropdown}>
@@ -526,27 +523,34 @@ function CandidateCard({ candidate, isSelected, onSelect, onMove, onDelete }: Ca
                 </button>
             </div>
 
-            <div className={styles.candidateRating}>
-                <div className={styles.stars}>
-                    {Array.from({length: 5 }).map((_, i) => (
-                        <span key={i} className={i < candidate.rating ? styles.starFilled : styles.star}>
-                            ★
-                        </span>
-                    ))}
-                </div>
-                <span className={styles.ratingText}>{candidate.rating} Overall</span>
+            <div className={styles.candidateFooter}>
+                {/* stars only when assessment is NOT pending */}
+                {!candidate.assessment && (
+                    <div className={styles.candidateRating}>
+                        <div className={styles.stars}>
+                            {Array.from({length: 5}).map((_, i) => (
+                                <span key={i} className={i < candidate.rating ? styles.starFilled : styles.star}>
+                ★
+              </span>
+                            ))}
+                        </div>
+                        <span className={styles.ratingText}>{candidate.rating} Overall</span>
+                    </div>
+                )}
 
+                {/* referred badge */}
                 {candidate.isReferred && (
                     <span className={styles.referredBadge}>
-                        <UserPlusIcon />
-                        Referred
-                    </span>
+          <UserPlusIcon/>
+          Referred
+        </span>
                 )}
+
             </div>
 
             {candidate.assessment && (
                 <div className={styles.assessmentButton}>
-                    <PlusIcon />
+                    <PlusIcon/>
                     Add Assessment
                 </div>
             )}
@@ -625,7 +629,8 @@ function ScoreIcon() {
             strokeLinecap="round"
             strokeLinejoin="round"
         >
-            <path d="M12 2L15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2z"></path>
+            <path
+                d="M12 2L15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2z"></path>
         </svg>
     )
 }
@@ -683,7 +688,8 @@ function SettingsIcon() {
             strokeLinejoin="round"
         >
             <circle cx="12" cy="12" r="3"></circle>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
         </svg>
     )
 }
